@@ -246,52 +246,56 @@ class JSONLoader(DocumentLoader):
 
 
 class MarkdownLoader(DocumentLoader):
-    """Load medical documents from Markdown files"""
+    """Load medical documents from Markdown and text files"""
 
     def __init__(self, md_dir: Path):
         """
         Initialize Markdown loader
 
         Args:
-            md_dir: Directory containing markdown files
+            md_dir: Directory containing markdown (.md) or text (.txt) files
         """
         self.md_dir = Path(md_dir)
         if not self.md_dir.exists():
-            logger.warning(f"Markdown directory does not exist: {self.md_dir}")
+            logger.warning(f"Directory does not exist: {self.md_dir}")
 
-        logger.info(f"Initialized Markdown loader for directory: {md_dir}")
+        logger.info(f"Initialized Markdown/Text loader for directory: {md_dir}")
 
     def load(self) -> List[MedicalDocument]:
-        """Load all markdown files from directory"""
+        """Load all markdown and text files from directory"""
         documents = []
 
         if not self.md_dir.exists():
-            logger.warning(f"Markdown directory does not exist: {self.md_dir}")
+            logger.warning(f"Directory does not exist: {self.md_dir}")
             return []
 
+        # Load both .md and .txt files
         md_files = list(self.md_dir.glob("*.md"))
-        logger.info(f"Found {len(md_files)} Markdown files")
+        txt_files = list(self.md_dir.glob("*.txt"))
+        all_files = md_files + txt_files
+        
+        logger.info(f"Found {len(md_files)} Markdown files and {len(txt_files)} text files")
 
-        for md_file in md_files:
+        for doc_file in all_files:
             try:
-                with open(md_file, "r", encoding="utf-8") as f:
+                with open(doc_file, "r", encoding="utf-8") as f:
                     content = f.read()
 
-                title = md_file.stem
+                title = doc_file.stem
 
                 doc = MedicalDocument(
-                    id=f"md_{md_file.stem}",
+                    id=f"doc_{doc_file.stem}",
                     title=title,
                     content=content,
-                    source=f"Markdown: {md_file.name}",
+                    source=f"Medical Document: {doc_file.name}",
                 )
                 documents.append(doc)
-                logger.info(f"Loaded Markdown: {title}")
+                logger.debug(f"Loaded document: {title}")
 
             except Exception as e:
-                logger.error(f"Error loading Markdown {md_file}: {e}")
+                logger.error(f"Error loading {doc_file}: {e}")
 
-        logger.info(f"Loaded {len(documents)} documents from Markdown files")
+        logger.info(f"Loaded {len(documents)} documents from directory")
         return documents
 
 

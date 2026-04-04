@@ -1,0 +1,38 @@
+
+PubMed Study: Aerobic Exercise and Insulin Sensitivity
+PMID: 15345678
+
+TITLE: Effect of aerobic exercise on insulin sensitivity in Type 2 Diabetes
+
+OBJECTIVE: 
+Evaluate the effect of moderate aerobic exercise on insulin sensitivity in 
+sedentary adults with type 2 diabetes.
+
+STUDY DESIGN:
+- Sample: 450 participants with type 2 diabetes
+- Age: 40-65 years
+- Duration: 6 months
+- Intervention: 150 minutes/week moderate aerobic exercise
+- Control: No structured exercise
+
+RESULTS:
+- 34% improvement in insulin sensitivity (HOMA-IR)
+- 1.5% reduction in HbA1c (intervention) vs 0.3% (control)
+- Average weight loss: 3 kg
+- 15% reduction in cardiovascular risk factors
+
+CONTRAINDICATIONS OBSERVED:
+- Proliferative retinopathy: Risk of retinal hemorrhage with high intensity
+- Severe peripheral neuropathy: Recommend non-weight-bearing activities
+- Recent MI: Gradual progression needed with medical supervision
+
+SAFETY FINDINGS:
+- No serious adverse events with supervision
+- Hypoglycemia in 8% (on insulin/sulfonylureas)
+- Recommended: glucose monitoring, proper footwear, gradual intensity increase
+
+CONCLUSION: 
+Moderate aerobic exercise is safe and effective for improving glycemic control
+in type 2 diabetes when combined with medical supervision and proper monitoring.
+
+Evidence Level: RCT (Randomized Controlled Trial)

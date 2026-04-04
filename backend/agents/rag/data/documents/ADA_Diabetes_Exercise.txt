@@ -1,0 +1,54 @@
+
+AMERICAN DIABETES ASSOCIATION (ADA)
+Exercise Guidelines for Type 2 Diabetes Management
+Published 2023
+
+===== RECOMMENDED EXERCISES =====
+
+1. AEROBIC EXERCISE
+   Frequency: 3-4 times per week (at least 150 minutes/week)
+   Intensity: Moderate (50-70% of max heart rate)
+   Duration: 30-45 minutes per session
+   Types: Brisk walking, cycling, swimming, dancing
+
+2. RESISTANCE TRAINING
+   Frequency: 2-3 times per week (non-consecutive days)
+   Intensity: Moderate to vigorous (60-80% 1RM)
+   Duration: 20-30 minutes per session
+   Focus: Large muscle groups (legs, chest, back)
+
+===== CONTRAINDICATIONS =====
+
+AVOID HIGH-INTENSITY EXERCISE IF:
+- Blood glucose > 250 mg/dL with ketones present
+- High-impact activities with diabetic neuropathy
+- Prolonged standing with foot complications
+- Uncontrolled hypertension (SBP >180 mmHg)
+
+===== SAFETY PRECAUTIONS =====
+
+1. Blood Glucose Monitoring
+   - Check before exercise
+   - Check during long sessions (every 60 minutes)
+   - Check after exercise
+   - Optimal range: 100-250 mg/dL before exercise
+
+2. Hydration and Nutrition
+   - Carry fast-acting carbs (glucose tablets, juice)
+   - Drink water before, during, and after exercise
+   - Time exercise 1-2 hours after meals
+
+3. Footwear and Inspection
+   - Proper supportive shoes required
+   - Check feet for injuries/blisters after exercise
+   - Consider protective socks for long sessions
+
+===== EXPECTED BENEFITS =====
+
+- Improved insulin sensitivity (lasts 48-72 hours post-exercise)
+- HbA1c reduction of 1-2% over 3-6 months
+- Weight loss and better cardiovascular health
+- Possible medication dose reduction
+
+Evidence Level: A (Multiple RCTs)
+PMID: ADA_2023

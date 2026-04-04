@@ -1,0 +1,58 @@
+
+WORLD HEALTH ORGANIZATION (WHO)
+Exercise Recommendations for Hypertension Control
+Global Strategy on Diet, Physical Activity and Health
+
+===== AEROBIC EXERCISE GUIDELINES =====
+
+Frequency: 5-7 days per week (ideally daily)
+Intensity: Moderate (50-70% max HR or 40-60% VO2 max)
+Duration: 30 minutes daily (150 minutes/week minimum)
+Type: Brisk walking, cycling, swimming, elliptical trainer
+
+EXPECTED BLOOD PRESSURE REDUCTION:
+- Systolic: 5-7 mmHg reduction
+- Diastolic: 3-5 mmHg reduction
+- Timeline: 2-4 weeks of consistent exercise
+
+===== RESISTANCE TRAINING =====
+
+Frequency: 2-3 days per week (non-consecutive)
+Intensity: Light to moderate (40-60% 1RM)
+Sets/Reps: 2-3 sets of 10-15 repetitions
+CAUTION: Avoid heavy lifting (>85% 1RM) - can cause blood pressure spike
+
+===== CONTRAINDICATIONS =====
+
+ABSOLUTE CONTRAINDICATIONS:
+- Severe hypertension (SBP >180): Obtain medical control first
+- Recent MI or stroke: Require medical clearance
+- Unstable angina: Exercise contraindicated
+- Severe aortic stenosis: Avoid strenuous activity
+
+===== PRECAUTIONS =====
+
+1. Blood Pressure Monitoring
+   - Check before and after exercise
+   - Target: <160/100 mmHg before exercise
+   - Stop if excessive elevation occurs
+
+2. Exercise Modification
+   - Gradual warm-up (5-10 minutes)
+   - Avoid breath-holding (Valsalva maneuver)
+   - Gradual cool-down (5-10 minutes)
+
+3. Environmental
+   - Avoid extreme heat
+   - Stay well-hydrated
+   - Exercise indoors on very hot days
+
+===== MEDICATION INTERACTIONS =====
+
+Beta-blockers: May blunt heart rate response; use RPE instead
+ACE inhibitors: Generally safe; may require dose adjustment
+Thiazide diuretics: Monitor for electrolyte balance
+Note: Medication doses often reduced after 3-6 months of exercise
+
+Evidence Level: A (Consensus from multiple studies)
+WHO Recommendation: 2020

@@ -26,16 +26,22 @@ class RAGConfig(BaseSettings):
     ollama_base_url: str = "http://localhost:11434"  # Ollama API endpoint
 
     # ======================== EMBEDDING SETTINGS ========================
-    # HuggingFace for free local embeddings (no API calls, no cost)
-    embedding_provider: Literal["openai", "huggingface"] = "huggingface"
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"  # Free, fast, 384D
-    embedding_dimension: int = 384  # MiniLM dimension
+    # NOMIC for better semantic search (local, free, 768D vectors)
+    # Options: 'openai', 'huggingface', 'nomic'
+    embedding_provider: Literal["openai", "huggingface", "nomic"] = "nomic"
+    embedding_model: str = "nomic-embed-text-v1.5"  # Superior semantic search, 768D
+    embedding_dimension: int = 768  # Nomic dimension (was 384 for MiniLM)
     batch_size_embeddings: int = 100
 
     # ======================== VECTOR DATABASE SETTINGS ========================
-    vector_db_type: Literal["faiss", "chroma", "pinecone"] = "faiss"
+    # CHROMA: Modern vector DB with persistence and built-in operations
+    # Options: 'faiss', 'chroma', 'pinecone'
+    vector_db_type: Literal["faiss", "chroma", "pinecone"] = "chroma"
     vector_db_path: Path = Path("backend/agents/rag/data/vector_store")
     chroma_collection_name: str = "medical_protocols"
+    chroma_persist_dir: Path = Path("backend/agents/rag/data/chroma_db")
+    chroma_host: str = "localhost"
+    chroma_port: int = 8000
 
     # ======================== DOCUMENT RETRIEVAL SETTINGS ========================
     chunk_size: int = 500  # Characters per chunk

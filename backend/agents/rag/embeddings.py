@@ -123,12 +123,74 @@ class HuggingFaceEmbeddings(EmbeddingProvider):
         return self._dimension
 
 
+class NomicEmbeddings(EmbeddingProvider):
+    """Nomic embedding provider (local, superior semantic search)"""
+
+    def __init__(self, model: str = "nomic-embed-text-v1.5"):
+        """
+        Initialize Nomic embeddings
+
+        Args:
+            model: Nomic model name (e.g., 'nomic-embed-text-v1.5')
+        """
+        try:
+            from nomicembedding import NomicEmbedding
+        except ImportError:
+            raise ImportError(
+                "Please install nomic: pip install nomic\n"
+                "Or install with: pip install 'nomic>=0.4.0'"
+            )
+
+        self.model_name = model
+        self.embedding = NomicEmbedding(model=model, inference_mode="local")
+        self._dimension = 768  # Nomic embed-text is 768-dimensional
+        logger.info(f"Initialized Nomic embeddings with model: {model}")
+
+    def embed_text(self, text: str) -> list:
+        """Generate embedding for single text"""
+        try:
+            result = self.embedding.query([text])
+            # Extract embedding from result
+            embedding = result["embeddings"][0] if result.get("embeddings") else result[0]
+            if isinstance(embedding, list):
+                return embedding
+            else:
+                return embedding.tolist() if hasattr(embedding, "tolist") else list(embedding)
+        except Exception as e:
+            logger.error(f"Error embedding text: {e}")
+            # Fallback to zeros
+            return [0.0] * self._dimension
+
+    def embed_batch(self, texts: list) -> list:
+        """Generate embeddings for batch of texts"""
+        if not texts:
+            return []
+
+        try:
+            result = self.embedding.query(texts)
+            embeddings = result.get("embeddings", result) if isinstance(result, dict) else result
+            
+            # Convert to list format
+            return [
+                emb.tolist() if hasattr(emb, "tolist") else list(emb)
+                for emb in embeddings
+            ]
+        except Exception as e:
+            logger.error(f"Error embedding batch: {e}")
+            # Fallback to zeros
+            return [[0.0] * self._dimension for _ in texts]
+
+    def get_dimension(self) -> int:
+        """Get embedding dimension"""
+        return self._dimension
+
+
 def create_embedding_provider(provider: str = "openai", **kwargs) -> EmbeddingProvider:
     """
     Factory function to create embedding provider
 
     Args:
-        provider: Provider name ('openai' or 'huggingface')
+        provider: Provider name ('openai', 'huggingface', or 'nomic')
         **kwargs: Arguments to pass to provider constructor
 
     Returns:
@@ -138,5 +200,7 @@ def create_embedding_provider(provider: str = "openai", **kwargs) -> EmbeddingPr
         return OpenAIEmbeddings(**kwargs)
     elif provider.lower() == "huggingface":
         return HuggingFaceEmbeddings(**kwargs)
+    elif provider.lower() == "nomic":
+        return NomicEmbeddings(**kwargs)
     else:
         raise ValueError(f"Unknown embedding provider: {provider}")
