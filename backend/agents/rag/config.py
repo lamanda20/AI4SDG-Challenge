@@ -34,14 +34,18 @@ class RAGConfig(BaseSettings):
     batch_size_embeddings: int = 100
 
     # ======================== VECTOR DATABASE SETTINGS ========================
-    # CHROMA: Modern vector DB with persistence and built-in operations
+    # PINECONE: Managed cloud vector DB (recommended for SOUFIA)
     # Options: 'faiss', 'chroma', 'pinecone'
-    vector_db_type: Literal["faiss", "chroma", "pinecone"] = "chroma"
+    vector_db_type: Literal["faiss", "chroma", "pinecone"] = "pinecone"
     vector_db_path: Path = Path("backend/agents/rag/data/vector_store")
-    chroma_collection_name: str = "medical_protocols"
-    chroma_persist_dir: Path = Path("backend/agents/rag/data/chroma_db")
-    chroma_host: str = "localhost"
-    chroma_port: int = 8000
+    
+    # ======================== PINECONE SETTINGS ========================
+    # Set these via environment variables (.env file)
+    pinecone_api_key: str = ""  # Set in .env: PINECONE_API_KEY
+    pinecone_environment: str = "us-west1-gcp"  # Pinecone region
+    pinecone_index_name: str = "us-east-1"  # Index name in Pinecone
+    pinecone_namespace: str = "ai4sdg"  # Namespace for data isolation
+    
 
     # ======================== DOCUMENT RETRIEVAL SETTINGS ========================
     chunk_size: int = 500  # Characters per chunk
@@ -66,6 +70,7 @@ class RAGConfig(BaseSettings):
     class Config:
         env_file = ".env"
         case_sensitive = False
+        extra = "ignore"  # Ignore extra environment variables from .env
 
 
 # Global config instance

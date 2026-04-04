@@ -301,7 +301,205 @@ class ChromaVectorStore(VectorStore):
         return self.collection.count() if self.collection else 0
 
 
-def create_vector_store(store_type: str = "faiss", **kwargs) -> VectorStore:
+class PineconeVectorStore(VectorStore):
+    """Pinecone vector store implementation - Managed cloud vector DB"""
+
+    def __init__(
+        self,
+        api_key: str,
+        environment: str = "us-west1-gcp",
+        index_name: str = "medical-protocols",
+        namespace: str = "ai4sdg",
+        embedding_dim: int = 768,
+    ):
+        """
+        Initialize Pinecone vector store.
+        
+        Args:
+            api_key: Pinecone API key (get from https://app.pinecone.io)
+            environment: Pinecone environment (e.g., 'us-west1-gcp')
+            index_name: Name of the Pinecone index
+            namespace: Namespace for data isolation
+            embedding_dim: Dimension of embeddings (should match model)
+        """
+        try:
+            from pinecone import Pinecone
+        except ImportError:
+            raise ImportError("Please install pinecone-client: pip install pinecone-client")
+
+        if not api_key:
+            raise ValueError(
+                "Pinecone API key required. Set via PINECONE_API_KEY environment variable "
+                "or pass api_key parameter. Get key from https://app.pinecone.io"
+            )
+
+        self.api_key = api_key
+        self.environment = environment
+        self.index_name = index_name
+        self.namespace = namespace
+        self.embedding_dim = embedding_dim
+
+        # Initialize Pinecone client
+        self.pc = Pinecone(api_key=api_key)
+
+        # Get or create index
+        self._init_index()
+        
+        logger.info(
+            f"Initialized Pinecone vector store: {index_name} "
+            f"(env: {environment}, namespace: {namespace}, dim: {embedding_dim})"
+        )
+
+    def _init_index(self):
+        """Initialize or connect to Pinecone index"""
+        try:
+            # List existing indexes
+            existing_indexes = self.pc.list_indexes()
+            
+            # Check if index exists
+            index_exists = any(idx.name == self.index_name for idx in existing_indexes)
+            
+            if not index_exists:
+                logger.info(f"Creating Pinecone index: {self.index_name}")
+                self.pc.create_index(
+                    name=self.index_name,
+                    dimension=self.embedding_dim,
+                    metric="cosine",
+                    spec={"serverless": {"cloud": "gcp", "region": self.environment.split("-")[-1]}},
+                )
+                logger.info("Index created. Waiting for readiness...")
+                import time
+                time.sleep(2)  # Wait for index to be ready
+            
+            # Connect to index
+            self.index = self.pc.Index(self.index_name)
+            logger.info(f"Connected to Pinecone index: {self.index_name}")
+            
+        except Exception as e:
+            logger.error(f"Error initializing Pinecone index: {e}")
+            raise
+
+    def add_documents(self, documents: List[MedicalDocument], embeddings_provider: EmbeddingProvider) -> None:
+        """Add documents and embeddings to Pinecone"""
+        if not documents:
+            logger.warning("No documents to add")
+            return
+
+        logger.info(f"Generating embeddings for {len(documents)} documents...")
+        
+        # Extract texts and generate embeddings
+        texts = [doc.content for doc in documents]
+        embeddings = embeddings_provider.embed_batch(texts)
+
+        # Prepare vectors with metadata for Pinecone
+        vectors_to_upsert = []
+        for doc, embedding in zip(documents, embeddings):
+            # Prepare metadata
+            metadata = {
+                "title": doc.title,
+                "source": doc.source,
+                "content": doc.content[:1000],  # Truncate for metadata size limits
+            }
+            if doc.pubmed_id:
+                metadata["pubmed_id"] = doc.pubmed_id
+            if doc.authors:
+                metadata["authors"] = ", ".join(doc.authors)
+            if doc.published_date:
+                metadata["published_date"] = doc.published_date
+
+            vectors_to_upsert.append((doc.id, embedding, metadata))
+
+        # Upsert to Pinecone in batches
+        batch_size = 100
+        for i in range(0, len(vectors_to_upsert), batch_size):
+            batch = vectors_to_upsert[i : i + batch_size]
+            try:
+                self.index.upsert(vectors=batch, namespace=self.namespace)
+                logger.debug(f"Upserted batch {i//batch_size + 1} ({len(batch)} documents)")
+            except Exception as e:
+                logger.error(f"Error upserting batch: {e}")
+                raise
+
+        logger.info(f"Successfully added {len(documents)} documents to Pinecone")
+
+    def search(
+        self,
+        query: str,
+        embeddings_provider: EmbeddingProvider,
+        k: int = 5,
+    ) -> List[Tuple[MedicalDocument, float]]:
+        """Search Pinecone for similar documents"""
+        # Generate query embedding
+        query_embedding = embeddings_provider.embed_text(query)
+
+        # Query Pinecone
+        try:
+            results = self.index.query(
+                vector=query_embedding,
+                top_k=k,
+                include_metadata=True,
+                namespace=self.namespace,
+            )
+        except Exception as e:
+            logger.error(f"Error querying Pinecone: {e}")
+            return []
+
+        # Format results
+        output = []
+        for match in results.get("matches", []):
+            metadata = match.get("metadata", {})
+            doc = MedicalDocument(
+                id=match["id"],
+                title=metadata.get("title", ""),
+                content=metadata.get("content", ""),
+                source=metadata.get("source", ""),
+                pubmed_id=metadata.get("pubmed_id"),
+                authors=metadata.get("authors", "").split(", ") if metadata.get("authors") else None,
+                published_date=metadata.get("published_date"),
+                relevance_score=float(match.get("score", 0.0)),
+            )
+            output.append((doc, doc.relevance_score))
+
+        logger.info(f"Retrieved {len(output)} documents from Pinecone")
+        return output
+
+    def delete(self, doc_id: str) -> None:
+        """Delete document from Pinecone"""
+        try:
+            self.index.delete(ids=[doc_id], namespace=self.namespace)
+            logger.info(f"Deleted document {doc_id} from Pinecone")
+        except Exception as e:
+            logger.error(f"Error deleting document {doc_id}: {e}")
+
+    def clear(self) -> None:
+        """Clear all documents from namespace"""
+        try:
+            self.index.delete(delete_all=True, namespace=self.namespace)
+            logger.info(f"Cleared all documents from namespace: {self.namespace}")
+        except Exception as e:
+            logger.error(f"Error clearing namespace: {e}")
+
+    def save(self, path: Path) -> None:
+        """Save operation (Pinecone maintains persistence automatically)"""
+        logger.info("Pinecone maintains persistence automatically - no local save needed")
+
+    def load(self, path: Path) -> None:
+        """Load operation (Pinecone loads from cloud automatically)"""
+        logger.info("Connected to Pinecone cloud index")
+
+    def get_size(self) -> int:
+        """Get number of documents in Pinecone index"""
+        try:
+            stats = self.index.describe_index_stats(namespace=self.namespace)
+            total_vectors = stats.total_vector_count
+            logger.debug(f"Pinecone index contains {total_vectors} vectors in namespace '{self.namespace}'")
+            return total_vectors
+        except Exception as e:
+            logger.error(f"Error getting index stats: {e}")
+            return 0
+
+
+def create_vector_store(store_type: str, **kwargs) -> "VectorStore":
     """
     Factory function to create vector store
 
@@ -319,5 +517,18 @@ def create_vector_store(store_type: str = "faiss", **kwargs) -> VectorStore:
         collection_name = kwargs.get("collection_name", "medical_protocols")
         persist_dir = kwargs.get("persist_dir")
         return ChromaVectorStore(collection_name, persist_dir)
+    elif store_type.lower() == "pinecone":
+        api_key = kwargs.get("api_key")
+        environment = kwargs.get("environment", "us-west1-gcp")
+        index_name = kwargs.get("index_name", "medical-protocols")
+        namespace = kwargs.get("namespace", "ai4sdg")
+        embedding_dim = kwargs.get("embedding_dim", 768)
+        return PineconeVectorStore(
+            api_key=api_key,
+            environment=environment,
+            index_name=index_name,
+            namespace=namespace,
+            embedding_dim=embedding_dim,
+        )
     else:
         raise ValueError(f"Unknown vector store type: {store_type}")
