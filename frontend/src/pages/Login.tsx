@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail]       = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError]       = useState('');
   const [loading, setLoading]   = useState(false);
@@ -15,10 +15,11 @@ export default function Login() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
-      navigate('/dashboard');
+      await login(identifier, password);
+      const savedRole = localStorage.getItem('role');
+      navigate(savedRole === 'admin' ? '/admin' : '/dashboard');
     } catch {
-      setError('Email ou mot de passe incorrect.');
+      setError('Identifiant ou mot de passe incorrect.');
     } finally {
       setLoading(false);
     }
@@ -29,11 +30,11 @@ export default function Login() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="font-heading text-4xl font-bold text-olive mb-2">🌿 SportRX AI</h1>
-          <p className="text-dark opacity-70">Your personal wellness coach</p>
+          <p className="text-dark opacity-70">Personalized coaching and health analytics</p>
         </div>
 
         <div className="bg-white rounded-3xl shadow-lg p-8">
-          <h2 className="font-heading text-2xl font-semibold text-olive mb-6">Welcome back</h2>
+          <h2 className="font-heading text-2xl font-semibold text-olive mb-6">Sign in</h2>
 
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 mb-4 text-sm">
@@ -43,13 +44,13 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-olive mb-1">Email</label>
+              <label className="block text-sm font-medium text-olive mb-1">Email or admin alias</label>
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                placeholder="you@example.com"
+                placeholder="name@example.com"
                 className="w-full px-4 py-3 rounded-2xl bg-cream border-2 border-transparent focus:border-olive focus:outline-none text-dark transition-all"
               />
             </div>
@@ -61,7 +62,7 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                placeholder="••••••••"
+                placeholder="Enter your password"
                 className="w-full px-4 py-3 rounded-2xl bg-cream border-2 border-transparent focus:border-olive focus:outline-none text-dark transition-all"
               />
             </div>
@@ -71,7 +72,7 @@ export default function Login() {
               disabled={loading}
               className="w-full py-4 rounded-full bg-orange text-white font-semibold text-base hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-60"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? 'Signing in...' : 'Continue'}
             </button>
           </form>
 

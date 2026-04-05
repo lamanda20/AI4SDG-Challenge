@@ -8,11 +8,15 @@ from sqlalchemy.orm import Session
 from database import get_db
 import crud
 
-SECRET_KEY = os.getenv("SECRET_KEY", "sportrx_super_secret_key_hackathon_2025")
+# Configuration
+SECRET_KEY = os.getenv("SECRET_KEY", "une_cle_secrete_tres_longue_pour_le_hackathon")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7  # 7 jours
 
+# Contexte de hashage des mots de passe
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Dépendance pour récupérer le token dans le header Authorization
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
 def verify_password(plain_password, hashed_password):
@@ -23,9 +27,13 @@ def get_password_hash(password):
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=15))
+    if expires_delta:
+        expire = datetime.utcnow() + expires_delta
+    else:
+        expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
 
 def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
@@ -40,6 +48,7 @@ def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(
             raise credentials_exception
     except JWTError:
         raise credentials_exception
+    
     user = crud.get_user_by_email(db, email=email)
     if user is None:
         raise credentials_exception

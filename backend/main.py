@@ -1,28 +1,35 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from database import engine, Base
-from api import users, auth_router
+from dotenv import load_dotenv
+from database import init_db
 
-Base.metadata.create_all(bind=engine)
+load_dotenv()
 
-app = FastAPI(
-    title="SportRX AI",
-    description="AI-powered exercise prescription for chronic disease management",
-    version="1.0.0",
-)
+from api.auth import router as auth_router
+from api.profile import router as profile_router
+from api.checkin import router as checkin_router
+from api.admin import router as admin_router
+from admin_bootstrap import ensure_admin_account
 
-# ✅ CORS — autorise le frontend React
+app = FastAPI(title="SportRX AI — Health Coach", version="2.0.0")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-    allow_credentials=True,
+    allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
- )
+)
 
-app.include_router(users.router)
-app.include_router(auth_router.router)
+app.include_router(auth_router)
+app.include_router(profile_router)
+app.include_router(checkin_router)
+app.include_router(admin_router)
 
-@app.get("/", tags=["Health"])
-def root():
-    return {"status": "SportRX API is running 🚀"}
+@app.on_event("startup")
+def startup():
+    init_db()
+    ensure_admin_account()
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}

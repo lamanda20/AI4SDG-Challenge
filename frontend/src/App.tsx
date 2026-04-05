@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import ProtectedRoute from './components/ui/ProtectedRoute';
+import RoleRoute from './components/ui/RoleRoute';
+import HomeRedirect from './components/ui/HomeRedirect';
 import Layout from './components/layout/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -8,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import ExercisePlan from './pages/ExercisePlan';
 import Onboarding from './pages/OnBoarding';
+import AdminDashboard from './pages/AdminDashboard';
 
 export default function App() {
   return (
@@ -21,14 +23,15 @@ export default function App() {
 
           {/* Protected routes */}
           <Route path="/" element={
-            <ProtectedRoute>
+            <RoleRoute allowRoles={['admin', 'client']}>
               <Layout />
-            </ProtectedRoute>
+            </RoleRoute>
           }>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard"  element={<Dashboard />} />
-            <Route path="profile"    element={<Profile />} />
-            <Route path="exercise"   element={<ExercisePlan />} />
+            <Route index element={<HomeRedirect />} />
+            <Route path="dashboard" element={<RoleRoute allowRoles={['client']} redirectTo="/admin"><Dashboard /></RoleRoute>} />
+            <Route path="profile" element={<RoleRoute allowRoles={['client']} redirectTo="/admin"><Profile /></RoleRoute>} />
+            <Route path="exercise" element={<RoleRoute allowRoles={['client']} redirectTo="/admin"><ExercisePlan /></RoleRoute>} />
+            <Route path="admin" element={<RoleRoute allowRoles={['admin']} redirectTo="/dashboard"><AdminDashboard /></RoleRoute>} />
           </Route>
         </Routes>
       </BrowserRouter>

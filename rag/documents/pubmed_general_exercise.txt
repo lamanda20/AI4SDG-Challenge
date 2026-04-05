@@ -1,0 +1,49 @@
+PubMed Search: exercise prescription chronic disease safety guidelines
+============================================================
+
+Title: 2023 AHA/ACC/ACCP/ASPC/NLA/PCNA Guideline for the Management of Patients With Chronic Coronary Disease: A Report of the American Heart Association/American College of Cardiology Joint Committee on Clinical Practice Guidelines.
+Authors: Virani SS, Newby LK, Arnold SV
+Journal: Circulation (2023 Aug 29)
+PMID: 37471501
+
+
+Title: American College of Sports Medicine position stand. Quantity and quality of exercise for developing and maintaining cardiorespiratory, musculoskeletal, and neuromotor fitness in apparently healthy adults: guidance for prescribing exercise.
+Authors: Garber CE, Blissmer B, Deschenes MR
+Journal: Med Sci Sports Exerc (2011 Jul)
+PMID: 21694556
+
+
+Title: Efficacy and safety of exercise training in patients with chronic heart failure: HF-ACTION randomized controlled trial.
+Authors: O'Connor CM, Whellan DJ, Lee KL
+Journal: JAMA (2009 Apr 8)
+PMID: 19351941
+
+
+Title: 2023 AHA/ACC/ACCP/ASPC/NLA/PCNA Guideline for the Management of Patients With Chronic Coronary Disease: A Report of the American Heart Association/American College of Cardiology Joint Committee on Clinical Practice Guidelines.
+Authors: Writing Committee Members, Virani SS, Newby LK
+Journal: J Am Coll Cardiol (2023 Aug 29)
+PMID: 37480922
+
+
+Title: Fatigue in CKD: Epidemiology, Pathophysiology, and Treatment.
+Authors: Gregg LP, Bossola M, Ostrosky-Frid M
+Journal: Clin J Am Soc Nephrol (2021 Sep)
+PMID: 33858827
+
+
+Title: Exercise for ankylosing spondylitis: An evidence-based consensus statement.
+Authors: Millner JR, Barron JS, Beinke KM
+Journal: Semin Arthritis Rheum (2016 Feb)
+PMID: 26493464
+
+
+Title: AMERICAN ASSOCIATION OF CLINICAL ENDOCRINOLOGISTS AND AMERICAN COLLEGE OF ENDOCRINOLOGY COMPREHENSIVE CLINICAL PRACTICE GUIDELINES FOR MEDICAL CARE OF PATIENTS WITH OBESITY.
+Authors: Garvey WT, Mechanick JI, Brett EM
+Journal: Endocr Pract (2016 Jul)
+PMID: 27219496
+
+
+Title: American College of Sports Medicine roundtable on exercise guidelines for cancer survivors.
+Authors: Schmitz KH, Courneya KS, Matthews C
+Journal: Med Sci Sports Exerc (2010 Jul)
+PMID: 20559064

@@ -1,0 +1,49 @@
+PubMed Search: diabetes aerobic resistance training intensity HbA1c
+============================================================
+
+Title: Effect of 5:2 Regimens: Energy-Restricted Diet or Low-Volume High-Intensity Interval Training Combined With Resistance Exercise on Glycemic Control and Cardiometabolic Health in Adults With Overweight/Obesity and Type 2 Diabetes: A Three-Arm Randomized Controlled Trial.
+Authors: Li M, Li J, Xu Y
+Journal: Diabetes Care (2024 Jun 1)
+PMID: 38638032
+
+
+Title: Effectiveness of Combined Aerobic and Resistance Exercise on Cognition, Metabolic Health, Physical Function, and Health-related Quality of Life in Middle-aged and Older Adults With Type 2 Diabetes Mellitus: A Systematic Review and Meta-analysis.
+Authors: Zhang J, Tam WWS, Hounsri K
+Journal: Arch Phys Med Rehabil (2024 Aug)
+PMID: 37875170
+
+
+Title: Resistance exercise versus aerobic exercise for type 2 diabetes: a systematic review and meta-analysis.
+Authors: Yang Z, Scott CA, Mao C
+Journal: Sports Med (2014 Apr)
+PMID: 24297743
+
+
+Title: Exercise and Type 2 Diabetes.
+Authors: Amanat S, Ghahri S, Dianatinasab A
+Journal: Adv Exp Med Biol (2020)
+PMID: 32342452
+
+
+Title: The effects of high-intensity interval training on glucose regulation and insulin resistance: a meta-analysis.
+Authors: Jelleyman C, Yates T, O'Donovan G
+Journal: Obes Rev (2015 Nov)
+PMID: 26481101
+
+
+Title: The effect on glycaemic control of low-volume high-intensity interval training versus endurance training in individuals with type 2 diabetes.
+Authors: Winding KM, Munch GW, Iepsen UW
+Journal: Diabetes Obes Metab (2018 May)
+PMID: 29272072
+
+
+Title: Exercise training modalities in prediabetes: a systematic review and network meta-analysis.
+Authors: Zhang H, Guo Y, Hua G
+Journal: Front Endocrinol (Lausanne) (2024)
+PMID: 38440785
+
+
+Title: A randomized controlled trial of resistance exercise training to improve glycemic control in older adults with type 2 diabetes.
+Authors: Castaneda C, Layne JE, Munoz-Orians L
+Journal: Diabetes Care (2002 Dec)
+PMID: 12453982

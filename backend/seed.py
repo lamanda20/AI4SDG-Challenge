@@ -1,7 +1,9 @@
 import sys, os
+import hashlib
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from database import SessionLocal, engine, Base
+from database import SessionLocal, engine
+from models import Base
 import models, crud, schemas
 
 # Crée les tables si elles n'existent pas
@@ -99,6 +101,26 @@ def seed():
             print(f"  ✅ Créé : [{user.id}] {user.name} — {user.chronic_condition}")
 
         print(f"\n🎉 {len(FAKE_PATIENTS)} patients insérés avec succès !")
+    finally:
+        db.close()
+
+
+def ensure_admin_account():
+    admin_email = os.getenv("ADMIN_LOGIN_EMAIL", "").strip()
+    if not admin_email:
+        return
+
+    admin_password = os.getenv("ADMIN_SEED_PASSWORD", "admin123")
+    admin_name = os.getenv("ADMIN_SEED_NAME", "Admin")
+    db = SessionLocal()
+    try:
+        existing_admin = crud.get_user_by_email(db, admin_email)
+        if existing_admin:
+            return
+
+        hashed_password = hashlib.sha256(admin_password.encode()).hexdigest()
+        crud.create_admin(db, admin_name, admin_email, hashed_password)
+        print(f"  ✅ Admin seeded: {admin_email}")
     finally:
         db.close()
 

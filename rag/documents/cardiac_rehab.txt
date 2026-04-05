@@ -1,0 +1,14 @@
+Cardiac Rehabilitation Exercise Guidelines
+Source: AHA/ACC 2023
+
+Exercise for Cardiovascular Disease:
+- Cardiac rehab reduces mortality by 20-25%
+- Phase 1 (inpatient): low-intensity ambulation, 3-5 METs
+- Phase 2 (outpatient): supervised aerobic training, 4-8 weeks
+- Target HR: 40-80% heart rate reserve
+- RPE: 11-14 (light to somewhat hard)
+- Warm-up and cool-down: minimum 10 min each
+- Avoid exercise in extreme temperatures
+- Stop exercise if: chest pain, severe dyspnea, dizziness, arrhythmia
+- Beta-blockers: use RPE instead of HR for intensity monitoring
+- Resistance training: safe after 2-4 weeks of aerobic training

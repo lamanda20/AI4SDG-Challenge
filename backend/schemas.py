@@ -1,112 +1,200 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import List, Optional
-from datetime import datetime
+from pydantic import BaseModel, Field, EmailStr, field_validator
+from typing import List, Optional, Dict
+from enum import Enum
 
 
-# ─────────────────────────────────────────
-# BIOMETRICS
-# ─────────────────────────────────────────
-
-class BiometricsBase(BaseModel):
-    # Commun à tous
-    hrv:             Optional[int]   = Field(None, example=35)
-    daily_steps:     Optional[int]   = Field(None, example=3200)
-    mood_score:      int             = Field(..., ge=1, le=10, example=4)
-    recent_feedback: str             = Field(..., example="Je suis épuisé aujourd'hui.")
-
-    # Diabète
-    hba1c:           Optional[float] = Field(None, example=7.8)
-
-    # Hypertension
-    blood_pressure:  Optional[str]   = Field(None, example="135/88")
-
-    # Général
-    bmi:             Optional[float] = Field(None, example=27.5)
-    vo2_max:         Optional[float] = Field(None, example=32.0)
-
-class BiometricsCreate(BiometricsBase):
-    pass
-
-class BiometricsResponse(BiometricsBase):
-    id:         int
-    user_id:    int
-    updated_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
+class Gender(str, Enum):
+    male = "male"
+    female = "female"
+    other = "other"
 
 
-# ─────────────────────────────────────────
-# USER / ADMIN / CLIENT
-# ─────────────────────────────────────────
-
-class UserBase(BaseModel):
-    name:  str            = Field(..., example="Karim Benali")
-    email: EmailStr       = Field(..., example="karim@email.com")
-    role:  str            = Field(..., example="client")  # "admin" ou "client"
-
-class AdminCreate(UserBase):
-    password:         str  = Field(..., example="admin1234")
-    can_manage_users: bool = True
-
-class ClientCreate(UserBase):
-    password:          str           = Field(..., example="pass1234")
-    age:               int           = Field(..., ge=18, le=100, example=55)
-    gender:            Optional[str] = Field(None, example="Male")
-    chronic_condition: str           = Field(..., example="Type 2 Diabetes")
-    biometrics:        BiometricsCreate
-
-class UserResponse(BaseModel):
-    id:    int
-    name:  str
-    email: str
-    role:  str
-    is_active: bool
-    created_at: Optional[datetime] = None
-
-    class Config:
-        from_attributes = True
-
-class ClientResponse(UserResponse):
-    age:               Optional[int] = None
-    gender:            Optional[str] = None
-    chronic_condition: Optional[str] = None
-    biometrics:        Optional[BiometricsResponse] = None
-
-    class Config:
-        from_attributes = True
+class ActivityLevel(str, Enum):
+    sedentary   = "sedentary"
+    light       = "light"
+    moderate    = "moderate"
+    active      = "active"
+    very_active = "very_active"
 
 
-# ─────────────────────────────────────────
-# CONTRATS INTER-AGENTS (pour l'équipe)
-# ─────────────────────────────────────────
+# ── Auth ───────────────────────────────────────────────────────────────────────
 
-class MedicalGuidelines(BaseModel):
-    """Sortie du Membre 2 — RAG Agent"""
-    condition:         str
-    safe_exercises:    List[str]
-    contraindications: List[str]
-    intensity_limit:   str
-    source_references: Optional[List[str]] = []
+class UserFormInput(BaseModel):
+    """Internal form object used by feature_engineering."""
+    user_id: str
+    age: int = Field(..., ge=18, le=120)
+    gender: Gender
+    height_cm: float = Field(..., gt=100, lt=250)
+    weight_kg: float = Field(..., gt=20, lt=300)
+    diseases:    List[str] = []
+    medications: List[str] = []
+    injuries:    List[str] = []
+    activity_level: ActivityLevel = ActivityLevel.sedentary
+    exercise_days_per_month: int = Field(default=0, ge=0, le=31)
+    goal_lose_weight:  bool = False
+    goal_build_muscle: bool = False
+    goal_endurance:    bool = False
+    mood:            Optional[str] = None
+    motivation_text: Optional[str] = None
+    current_heart_rate:       Optional[float] = None
+    daily_steps:              Optional[int]   = None
+    sleep_hours:              Optional[float] = None
+    blood_pressure_systolic:  Optional[float] = None
+    blood_pressure_diastolic: Optional[float] = None
+    hba1c:           Optional[float] = None
+    fasting_glucose: Optional[float] = None
+    vo2_max:         Optional[float] = None
 
-class UserAnalysis(BaseModel):
-    """Sortie du Membre 4 — ML + Sentiment Agent"""
-    dropout_risk:      float = Field(..., ge=0.0, le=1.0)
-    sentiment_status:  str   = Field(..., example="Burnout")
-    recommended_tone:  str   = Field(..., example="Empathic CBT")
-    risk_explanation:  Optional[str] = None
 
-class ExerciseItem(BaseModel):
-    """Un exercice dans le plan"""
-    name:      str            = Field(..., example="Marche lente")
-    duration:  str            = Field(..., example="15 min")
-    intensity: str            = Field(..., example="Faible")
-    notes:     Optional[str]  = None
+class RegisterRequest(BaseModel):
+    name:     str   = Field(..., min_length=2, max_length=100)
+    email:    EmailStr
+    password: str   = Field(..., min_length=6)
 
-class ExercisePlan(BaseModel):
-    """Sortie du Membre 3 — LLM Coach Agent"""
-    user_id:              int
-    daily_goal:           str
-    exercises:            List[ExerciseItem]
+    # Personal
+    age:       int   = Field(..., ge=18, le=120)
+    gender:    Gender
+    height_cm: float = Field(..., gt=100, lt=250)
+    weight_kg: float = Field(..., gt=20,  lt=300)
+
+    # Health
+    diseases:    List[str] = []
+    medications: List[str] = []
+    injuries:    List[str] = []
+
+    # Fitness
+    activity_level:          ActivityLevel = ActivityLevel.sedentary
+    exercise_days_per_month: int           = Field(default=0, ge=0, le=31)
+
+    # Goals
+    goal_lose_weight:  bool = False
+    goal_build_muscle: bool = False
+    goal_endurance:    bool = False
+
+    # Mental
+    mood:            Optional[str] = None
+    motivation_text: Optional[str] = None
+
+    # Biometrics (optional)
+    current_heart_rate:       Optional[float] = None
+    daily_steps:              Optional[int]   = None
+    sleep_hours:              Optional[float] = None
+    blood_pressure_systolic:  Optional[float] = None
+    blood_pressure_diastolic: Optional[float] = None
+    hba1c:           Optional[float] = None
+    fasting_glucose: Optional[float] = None
+    vo2_max:         Optional[float] = None
+
+    @field_validator("diseases", "medications", "injuries", mode="before")
+    @classmethod
+    def parse_comma_string(cls, v):
+        if isinstance(v, str):
+            return [x.strip().lower() for x in v.split(",") if x.strip()]
+        return v
+
+
+class LoginRequest(BaseModel):
+    email: str = Field(..., min_length=1)
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    role: str
+
+
+# ── Checkin (bi-weekly) ────────────────────────────────────────────────────────
+
+class CheckinRequest(BaseModel):
+    sessions_completed: int = Field(..., ge=0, le=14, description="Sessions done in last 2 weeks")
+    avg_energy_level:   int = Field(..., ge=1, le=10)
+    avg_pain_level:     int = Field(default=0, ge=0, le=10)
+    weight_kg:          Optional[float] = None
+    mood_text:          Optional[str]   = None
+    feedback_text:      Optional[str]   = None
+    # Updated biometrics
+    current_heart_rate:       Optional[float] = None
+    blood_pressure_systolic:  Optional[float] = None
+    blood_pressure_diastolic: Optional[float] = None
+    sleep_hours:              Optional[float] = None
+    daily_steps:              Optional[int]   = None
+
+
+# ── Responses ──────────────────────────────────────────────────────────────────
+
+class TrainingPlanResponse(BaseModel):
+    id: int
+    week_number: int
+    risk_level: str
+    sentiment_label: str
+    recommended_intensity: str
+    weekly_plan: Dict
+    warnings: List[str]
     motivational_message: str
-    generated_at:         Optional[datetime] = None
+    medical_guidelines: List[str]
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
+class UserProfileResponse(BaseModel):
+    id: int
+    name: str
+    email: str
+    age: int
+    gender: str
+    weight_kg: float
+    height_cm: float
+    diseases: List[str]
+    activity_level: str
+    latest_plan: Optional[TrainingPlanResponse] = None
+    total_plans: int = 0
+    total_checkins: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class CheckinResponse(BaseModel):
+    checkin_id: int
+    week_number: int
+    new_plan: TrainingPlanResponse
+    progress_summary: str
+
+
+# ── Admin Analytics ───────────────────────────────────────────────────────────
+
+class AdminBootstrapRequest(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+    bootstrap_key: str = Field(..., min_length=4)
+
+
+class AdminBootstrapResponse(BaseModel):
+    admin_id: int
+    email: EmailStr
+    token: str
+
+
+class CountByLabel(BaseModel):
+    label: str
+    count: int
+
+
+class DiseaseMatrixPoint(BaseModel):
+    disease: str
+    segment: str
+    count: int
+
+
+class AdminOverviewResponse(BaseModel):
+    total_users: int
+    total_clients: int
+    total_admins: int
+    total_plans: int
+    total_checkins: int
+    risk_levels: List[CountByLabel]
+    activity_levels: List[CountByLabel]

@@ -1,16 +1,39 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import { Navigate } from 'react-router-dom';
+import { getMyProfile, type UserProfileResponse } from '../services/backendApi';
 
 export default function Dashboard() {
-  const { userId } = useAuth();
-  const [client, setClient] = useState<any>(null);
+  const { role } = useAuth();
+  const [client, setClient] = useState<UserProfileResponse | null>(null);
+  const [error, setError] = useState('');
+
+  const isAdmin = role === 'admin';
 
   useEffect(() => {
-    if (userId) {
-      api.get(`/users/${userId}`).then((res) => setClient(res.data));
-    }
-  }, [userId]);
+    if (isAdmin) return;
+
+    const loadProfile = async () => {
+      try {
+        const profile = await getMyProfile();
+        setClient(profile);
+      } catch {
+        setError('Unable to load dashboard data.');
+      }
+    };
+
+    void loadProfile();
+  }, [isAdmin]);
+
+  if (isAdmin) return <Navigate to="/admin" replace />;
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3">
+        {error}
+      </div>
+    );
+  }
 
   if (!client) return (
     <div className="flex items-center justify-center h-64">
@@ -30,10 +53,10 @@ export default function Dashboard() {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: 'Daily Steps',    value: client.biometrics?.daily_steps ?? '—',  unit: 'steps',  color: 'bg-olive' },
-          { label: 'HRV',            value: client.biometrics?.hrv ?? '—',          unit: 'ms',     color: 'bg-orange' },
-          { label: 'Mood Score',     value: client.biometrics?.mood_score ?? '—',   unit: '/ 10',   color: 'bg-apricot' },
-          { label: 'BMI',            value: client.biometrics?.bmi ?? '—',          unit: '',       color: 'bg-gold' },
+          { label: 'Weight', value: client.weight_kg, unit: 'kg', color: 'bg-olive' },
+          { label: 'Plans', value: client.total_plans, unit: 'total', color: 'bg-orange' },
+          { label: 'Check-ins', value: client.total_checkins, unit: 'total', color: 'bg-apricot' },
+          { label: 'Intensity', value: client.latest_plan?.recommended_intensity ?? '—', unit: '', color: 'bg-gold' },
         ].map((stat) => (
           <div key={stat.label} className={`${stat.color} text-white rounded-2xl p-5 shadow-md`}>
             <p className="text-sm opacity-80">{stat.label}</p>
@@ -47,18 +70,18 @@ export default function Dashboard() {
       <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-olive">
         <h2 className="font-heading text-xl font-semibold text-olive mb-2">Health Profile</h2>
         <div className="grid grid-cols-2 gap-4 text-sm text-dark">
-          <div><span className="opacity-60">Condition:</span> <span className="font-medium">{client.chronic_condition}</span></div>
+          <div><span className="opacity-60">Diseases:</span> <span className="font-medium">{client.diseases.join(', ') || 'None'}</span></div>
           <div><span className="opacity-60">Age:</span> <span className="font-medium">{client.age}</span></div>
           <div><span className="opacity-60">Gender:</span> <span className="font-medium">{client.gender ?? '—'}</span></div>
-          <div><span className="opacity-60">HbA1c:</span> <span className="font-medium">{client.biometrics?.hba1c ?? '—'}</span></div>
+          <div><span className="opacity-60">Activity:</span> <span className="font-medium">{client.activity_level}</span></div>
         </div>
       </div>
 
       {/* Feedback Card */}
       <div className="bg-white rounded-2xl p-6 shadow-md border-l-4 border-apricot">
-        <h2 className="font-heading text-xl font-semibold text-olive mb-2">Latest Feedback</h2>
+        <h2 className="font-heading text-xl font-semibold text-olive mb-2">Latest Plan Summary</h2>
         <p className="text-dark italic opacity-80">
-          "{client.biometrics?.recent_feedback ?? 'No feedback yet.'}"
+          "{client.latest_plan?.motivational_message ?? 'No generated plan yet.'}"
         </p>
       </div>
     </div>

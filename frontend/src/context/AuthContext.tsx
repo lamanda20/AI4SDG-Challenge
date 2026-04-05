@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import api from '../services/api';
+import { getMyProfile, loginClient } from '../services/backendApi';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isInitializing: boolean;
   userId: number | null;
   role: string | null;
   token: string | null;
@@ -14,40 +15,77 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const [userId, setUserId]   = useState<number | null>(null);
   const [role, setRole]       = useState<string | null>(null);
   const [token, setToken]     = useState<string | null>(null);
 
   // Restaurer la session au reload
   useEffect(() => {
-    const savedToken = localStorage.getItem('token');
-    const savedUserId = localStorage.getItem('userId');
-    const savedRole = localStorage.getItem('role');
-    if (savedToken) {
+    const restoreSession = async () => {
+      const savedToken = localStorage.getItem('token');
+      if (!savedToken) {
+        setIsInitializing(false);
+        return;
+      }
+
       setToken(savedToken);
-      setUserId(savedUserId ? parseInt(savedUserId) : null);
-      setRole(savedRole);
-      setIsAuthenticated(true);
-    }
+
+      const savedRole = localStorage.getItem('role');
+      if (savedRole) {
+        setRole(savedRole);
+      }
+
+      const savedUserId = localStorage.getItem('userId');
+      if (savedUserId) {
+        setUserId(parseInt(savedUserId, 10));
+      }
+
+      if (savedUserId && savedRole) {
+        setIsAuthenticated(true);
+        setIsInitializing(false);
+        return;
+      }
+
+      try {
+        const profile = await getMyProfile();
+        setIsAuthenticated(true);
+        setUserId(profile.id);
+        localStorage.setItem('userId', profile.id.toString());
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('role');
+        setIsAuthenticated(false);
+        setToken(null);
+        setRole(null);
+      } finally {
+        setIsInitializing(false);
+      }
+    };
+
+    void restoreSession();
   }, []);
 
   const login = async (email: string, password: string) => {
-    const formData = new URLSearchParams();
-    formData.append('username', email);
-    formData.append('password', password);
+    const data = await loginClient(email, password);
+    localStorage.setItem('token', data.access_token);
+    localStorage.setItem('role', data.role);
 
-    const response = await api.post('/auth/login', formData.toString(), {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
+    let authenticatedUserId: number | null = null;
+    if (data.role !== 'admin') {
+      const profile = await getMyProfile();
+      authenticatedUserId = profile.id;
+      localStorage.setItem('userId', profile.id.toString());
+    }
 
-    const data = response.data;
     setIsAuthenticated(true);
-    setUserId(data.user_id);
+    setUserId(authenticatedUserId);
     setRole(data.role);
     setToken(data.access_token);
-    localStorage.setItem('token', data.access_token);
-    localStorage.setItem('userId', data.user_id.toString());
-    localStorage.setItem('role', data.role);
+    if (authenticatedUserId === null) {
+      localStorage.removeItem('userId');
+    }
   };
 
   const logout = () => {
@@ -61,7 +99,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userId, role, token, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isInitializing, userId, role, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
