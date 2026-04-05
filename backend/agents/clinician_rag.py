@@ -1,17 +1,34 @@
 """
 clinician_rag.py
-Agent: retrieves evidence-based medical guidelines from vector DB.
-Stub implementation - replace _query_vector_db() with your actual vector store client.
+Agent: retrieves evidence-based medical guidelines.
+- If PINECONE_API_KEY is set -> queries real vector DB
+- Otherwise -> uses hardcoded stub (for dev/testing)
 """
 
 from typing import List
 
 
-def _query_vector_db(query: str, top_k: int = 3) -> List[str]:
+def retrieve_guidelines(query: str, top_k: int = 4) -> List[str]:
     """
-    Stub: returns hardcoded guidelines keyed on keywords in the query.
-    In production: embed query -> similarity search -> return top_k chunks.
+    Main interface: returns relevant medical guidelines for a given query.
+    Automatically uses Pinecone if configured, else falls back to stub.
     """
+    # Try real Pinecone RAG first
+    try:
+        from rag.retriever import retrieve, is_available
+        if is_available():
+            results = retrieve(query, top_k=top_k)
+            if results:
+                return results
+    except Exception as e:
+        print(f"[clinician_rag] Pinecone unavailable: {e}. Using stub.")
+
+    # Fallback: hardcoded guidelines
+    return _stub_guidelines(query, top_k)
+
+
+def _stub_guidelines(query: str, top_k: int) -> List[str]:
+    """Hardcoded guidelines used when Pinecone is not configured."""
     guidelines = []
     q = query.lower()
 
@@ -45,7 +62,6 @@ def _query_vector_db(query: str, top_k: int = 3) -> List[str]:
             "ACSM 2023: Endurance training should follow progressive overload principle. "
             "Increase weekly volume by no more than 10% per week."
         )
-
     if not guidelines:
         guidelines.append(
             "ACSM General: Adults should perform 150-300 min/week moderate aerobic activity "
@@ -53,10 +69,3 @@ def _query_vector_db(query: str, top_k: int = 3) -> List[str]:
         )
 
     return guidelines[:top_k]
-
-
-def retrieve_guidelines(query: str) -> List[str]:
-    """
-    Public interface: given a RAG query string, return relevant medical guidelines.
-    """
-    return _query_vector_db(query)

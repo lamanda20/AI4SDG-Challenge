@@ -10,6 +10,7 @@ Logique:
 """
 
 from fastapi import APIRouter, Depends
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from backend.database import get_db

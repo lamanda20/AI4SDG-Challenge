@@ -1,0 +1,49 @@
+PubMed Search: elderly older adults exercise safety recommendations
+============================================================
+
+Title: American College of Sports Medicine position stand. Quantity and quality of exercise for developing and maintaining cardiorespiratory, musculoskeletal, and neuromotor fitness in apparently healthy adults: guidance for prescribing exercise.
+Authors: Garber CE, Blissmer B, Deschenes MR
+Journal: Med Sci Sports Exerc (2011 Jul)
+PMID: 21694556
+
+
+Title: Aerobic Exercise and Weight Loss in Adults: A Systematic Review and Dose-Response Meta-Analysis.
+Authors: Jayedi A, Soltani S, Emadi A
+Journal: JAMA Netw Open (2024 Dec 2)
+PMID: 39724371
+
+
+Title: Management of Premenstrual Disorders: ACOG Clinical Practice Guideline No. 7.
+Authors: 
+Journal: Obstet Gynecol (2023 Dec 1)
+PMID: 37973069
+
+
+Title: American Geriatrics Society response to the World Falls Guidelines.
+Authors: Eckstrom E, Vincenzo JL, Casey CM
+Journal: J Am Geriatr Soc (2024 Jun)
+PMID: 38131656
+
+
+Title: Efficacy and safety of exercise training in patients with chronic heart failure: HF-ACTION randomized controlled trial.
+Authors: O'Connor CM, Whellan DJ, Lee KL
+Journal: JAMA (2009 Apr 8)
+PMID: 19351941
+
+
+Title: Motor control exercise for chronic non-specific low-back pain.
+Authors: Saragiotto BT, Maher CG, Yamato TP
+Journal: Cochrane Database Syst Rev (2016 Jan 8)
+PMID: 26742533
+
+
+Title: Managing knee osteoarthritis with yoga or aerobic/strengthening exercise programs in older adults: a pilot randomized controlled trial.
+Authors: Cheung C, Wyman JF, Bronas U
+Journal: Rheumatol Int (2017 Mar)
+PMID: 27913870
+
+
+Title: Digital Therapeutics-Based Cardio-Oncology Rehabilitation for Lung Cancer Survivors: Randomized Controlled Trial.
+Authors: Li G, Zhou X, Deng J
+Journal: JMIR Mhealth Uhealth (2025 Feb 25)
+PMID: 39999435

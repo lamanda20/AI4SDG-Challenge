@@ -4,7 +4,8 @@ GET /profile/me     → profil client + dernier plan
 GET /profile/plans  → historique complet des plans
 """
 
-from fastapi import APIRouter, HTTPException, Depends, Header
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from backend.database import get_db
@@ -14,9 +15,10 @@ from backend.api.auth import _verify_token
 
 router = APIRouter(prefix="/profile", tags=["profile"])
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
-def _get_current_user(authorization: str = Header(...), db: Session = Depends(get_db)):
-    token   = authorization.replace("Bearer ", "").replace("bearer ", "")
+
+def _get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
     user_id = _verify_token(token)
     user    = get_client_by_id(db, user_id)
     if not user:

@@ -5,6 +5,7 @@ POST /auth/login     → JWT token
 """
 
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 import hashlib, os, jwt
@@ -78,5 +79,14 @@ def register(data: RegisterRequest, db: Session = Depends(get_db)):
 def login(data: LoginRequest, db: Session = Depends(get_db)):
     user = get_user_by_email(db, data.email)
     if not user or user.hashed_password != _hash_password(data.password):
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    return TokenResponse(access_token=_create_token(user.id))
+
+
+@router.post("/token", response_model=TokenResponse, include_in_schema=False)
+def login_swagger(form: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    """OAuth2 form-based login — used by Swagger UI Authorize button."""
+    user = get_user_by_email(db, form.username)  # username = email in Swagger
+    if not user or user.hashed_password != _hash_password(form.password):
         raise HTTPException(status_code=401, detail="Invalid email or password")
     return TokenResponse(access_token=_create_token(user.id))

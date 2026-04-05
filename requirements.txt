@@ -21,6 +21,11 @@ pytest-cov==4.1.0
 # LLM (free)
 groq>=0.9.0
 
+# RAG
+sentence-transformers>=2.2.0
+pinecone>=3.0.0
+pypdf2>=3.0.0
+
 # Auth
 PyJWT>=2.8.0
 email-validator>=2.0.0
