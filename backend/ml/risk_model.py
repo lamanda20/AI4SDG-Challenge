@@ -112,7 +112,6 @@ class RiskPredictionModel:
         If no data provided, uses synthetic data
         """
         if not HAS_XGBOOST:
-            print("⚠️  XGBoost not installed. Using heuristic-based fallback model.")
             self.model = "heuristic"  # Use heuristic fallback
             return self
 
@@ -206,7 +205,7 @@ class RiskPredictionModel:
         risk_score = 50.0  # Base score
 
         # HbA1c: Major factor for diabetics
-        hba1c = features['hba1c']
+        hba1c = features['hba1c'] or 5.5
         if hba1c > 8.5:
             risk_score += 20
         elif hba1c > 7.5:
@@ -233,7 +232,7 @@ class RiskPredictionModel:
             risk_score += 5
 
         # VO2 Max (inverse - lower is worse)
-        vo2 = features['vo2_max']
+        vo2 = features['vo2_max'] or 35.0
         if vo2 < 20:
             risk_score += 15
         elif vo2 < 30:
@@ -308,7 +307,7 @@ class RiskPredictionModel:
         biometrics = user_profile.get('current_biometrics', {})
 
         # Progression risk: depends on clinical markers and condition severity
-        hba1c = user_profile.get('hba1c', 5.5)
+        hba1c = user_profile.get('hba1c') or 5.5
         if hba1c > 8.0:
             progression_risk = min(90, overall_risk * 1.3)
         elif hba1c > 7.0:
@@ -321,8 +320,8 @@ class RiskPredictionModel:
         adherence_risk = max(10, 100 - (exercise_days * 2))
 
         # Injury risk: depends on intensity markers and VO2 max
-        vo2_max = user_profile.get('vo2_max', 35)
-        hr_variability = biometrics.get('heart_rate_variability', 50)
+        vo2_max = user_profile.get('vo2_max') or 35.0
+        hr_variability = biometrics.get('heart_rate_variability') or 50
         if vo2_max < 25 or hr_variability < 30:
             injury_risk = min(80, overall_risk * 0.9)
         else:
