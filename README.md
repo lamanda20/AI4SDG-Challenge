@@ -1,195 +1,262 @@
-# 🚀 SportRX AI - ML Module (Taha)
+# SportRX AI — Intelligent Health Coach
 
-**Sentiment & Predictive ML for Chronic Disease Management**
-
----
-
-## ✅ STATUS
-- ✅ **PRODUCTION READY**
-- ✅ **7/7 Tests Passing**
-- ✅ **All modules working**
-- ✅ **Ready for Jour 2 Integration**
+> AI-powered chronic disease management platform built for the AI4SDG Challenge.
+> Combines predictive ML, RAG-based medical retrieval, and an LLM coaching agent to deliver personalized exercise prescriptions.
 
 ---
 
-## 📦 WHAT'S INCLUDED
+## Overview
 
-### Core ML Module (7 files)
+SportRX AI helps patients with chronic conditions (diabetes, hypertension, obesity) receive safe, adaptive exercise plans backed by clinical evidence. The system analyzes biometric data, predicts health risks, retrieves relevant medical literature, and generates personalized coaching advice through a conversational AI.
+
+**SDG Alignment:** SDG 3 — Good Health and Well-Being
+
+---
+
+## Architecture
+
 ```
-backend/ml/
-├── contracts.py              (JSON schemas - Input/Output)
-├── sentiment_analysis.py     (Sentiment + CBT)
-├── risk_model.py             (Risk prediction)
-├── pipeline.py               (ML orchestrator)
-├── config.py                 (Configuration)
-├── ml_routes.py              (FastAPI endpoints)
-└── test_ml.py                (Unit tests)
+┌─────────────────────────────────────────────────────────┐
+│                     Frontend (React)                    │
+│  Login · Register · Dashboard · Exercise Plan · Profile │
+└──────────────────────┬──────────────────────────────────┘
+                       │ REST API
+┌──────────────────────▼──────────────────────────────────┐
+│                  Backend (FastAPI)                       │
+│                                                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌────────────────┐  │
+│  │  ML Module  │  │  RAG Module │  │   LLM Agents   │  │
+│  │ Risk model  │  │ PubMed docs │  │ Clinician RAG  │  │
+│  │ Sentiment   │  │ Embeddings  │  │ Motivator ML   │  │
+│  │ CBT engine  │  │ Retriever   │  │ Prescriber LLM │  │
+│  └─────────────┘  └─────────────┘  └────────────────┘  │
+│                                                         │
+│  Auth · User Profiles · Check-ins · Admin Dashboard     │
+└──────────────────────────────────────────────────────────┘
+                       │
+               SQLite / PostgreSQL
 ```
-
-### Features
-- ✅ **Risk Prediction** (4 dimensions)
-- ✅ **Sentiment Analysis** + Depression Detection
-- ✅ **CBT Framework** (Behavioral interventions)
-- ✅ **Dynamic Exercise Intensity**
-- ✅ **Safety Warnings** (Clinical thresholds)
 
 ---
 
-## 🧪 TESTING
+## Tech Stack
 
-### Quick Test
+| Layer | Technology |
+|-------|-----------|
+| Frontend | React 18, TypeScript, Tailwind CSS |
+| Backend | FastAPI, SQLAlchemy, Pydantic |
+| ML | XGBoost, scikit-learn, NLTK, NumPy |
+| RAG | Sentence Transformers, Pinecone, PyPDF2 |
+| LLM | Groq API |
+| Auth | JWT (PyJWT) |
+| Database | SQLite (dev) / PostgreSQL (prod) |
+
+---
+
+## Project Structure
+
+```
+AI4SDG-Challenge/
+├── backend/
+│   ├── main.py                  # FastAPI app entry point
+│   ├── models.py                # SQLAlchemy models
+│   ├── schemas.py               # Pydantic schemas
+│   ├── crud.py                  # Database operations
+│   ├── database.py              # DB connection
+│   ├── auth.py                  # JWT authentication
+│   ├── api/
+│   │   ├── auth.py              # /auth endpoints
+│   │   ├── profile.py           # /profile endpoints
+│   │   ├── checkin.py           # /checkin endpoints
+│   │   ├── admin.py             # /admin endpoints
+│   │   ├── coaching.py          # /coaching endpoints
+│   │   └── ml_routes.py         # /ml endpoints
+│   ├── ml/
+│   │   ├── pipeline.py          # ML orchestrator
+│   │   ├── risk_model.py        # Risk prediction (4 dimensions)
+│   │   ├── sentiment_analysis.py# Sentiment + CBT framework
+│   │   └── contracts.py         # Input/output schemas
+│   ├── agents/
+│   │   ├── clinician_rag.py     # RAG-based clinical agent
+│   │   ├── motivator_ml.py      # ML-driven motivation agent
+│   │   └── prescriber_llm.py    # LLM exercise prescriber
+│   └── services/
+│
+├── rag/
+│   ├── indexer.py               # Document indexing
+│   ├── retriever.py             # Semantic retrieval
+│   ├── downloader.py            # PubMed/document fetcher
+│   └── documents/               # Indexed medical documents
+│
+├── frontend/
+│   └── src/
+│       ├── pages/
+│       │   ├── Login.tsx
+│       │   ├── Register.tsx
+│       │   ├── Dashboard.tsx
+│       │   ├── ExercisePlan.tsx
+│       │   ├── Profile.tsx
+│       │   ├── OnBoarding.tsx
+│       │   └── AdminDashboard.tsx
+│       ├── components/
+│       └── services/            # API client calls
+│
+├── docs/                        # Technical documentation
+├── requirements.txt
+└── .env                         # Environment variables (not committed)
+```
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18+
+- A [Groq](https://console.groq.com) API key (free)
+- Optional: Pinecone API key for RAG vector store
+
+### Backend Setup
+
 ```bash
-python direct_test.py
-# Result: ALL PASSING ✅
+# Clone the repo
+git clone https://github.com/<your-org>/AI4SDG-Challenge.git
+cd AI4SDG-Challenge
+
+# Create virtual environment
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Configure environment
+cp .env.example .env
+# Edit .env with your API keys
+
+# Start the API server
+cd backend
+uvicorn main:app --reload --port 8000
 ```
 
-### Comprehensive Tests
+API available at `http://localhost:8000`  
+Interactive docs at `http://localhost:8000/docs`
+
+### Frontend Setup
+
 ```bash
-python test_ml_comprehensive.py
-# Result: 7/7 TESTS PASSING ✅
+cd frontend
+npm install
+npm run dev
+```
+
+App available at `http://localhost:5173`
+
+---
+
+## Environment Variables
+
+```env
+# Required
+GROQ_API_KEY=your_groq_api_key
+SECRET_KEY=your_jwt_secret
+
+# Optional (RAG vector store)
+PINECONE_API_KEY=your_pinecone_key
+PINECONE_INDEX=sportrx-medical
+
+# Database (defaults to SQLite)
+DATABASE_URL=sqlite:///./sportrx.db
 ```
 
 ---
 
-## 📥 INPUTS (What to Pass)
+## API Endpoints
 
-**Single input**: UserProfile dict
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Create account |
+| POST | `/auth/login` | Get JWT token |
 
-**Mandatory (4):**
-- `user_id` (string)
-- `age` (int, 18-120)
-- `bmi` (float, 10-60)
-- `current_biometrics` (dict with 6 fields)
+### User
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET/PUT | `/profile` | User profile |
+| POST | `/checkin` | Daily biometric check-in |
 
-**Optional (7):**
-- `vo2_max`, `hba1c`, `fasting_glucose`
-- `current_medications`, `exercise_history_days`
-- `health_conditions`, `user_feedback_text`
+### AI / ML
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/ml/analyze` | Full ML pipeline |
+| POST | `/api/ml/risk-only` | Risk assessment only |
+| POST | `/api/ml/sentiment-only` | Sentiment analysis only |
+| GET | `/api/ml/health` | ML module health check |
+| POST | `/coaching` | AI coaching session |
 
-See `QUICK_INPUT_REFERENCE.md` for examples.
-
----
-
-## 📤 OUTPUTS (What You Get)
-
-**Single output**: MLModuleOutput JSON
-
-Contains:
-- `risk_assessment` (score, level, 3 risk dimensions)
-- `sentiment_analysis` (score, label, depression risk)
-- `recommended_exercise_intensity`
-- `warnings` (safety alerts)
-- `metadata` (model version, CBT strategy)
-
----
-
-## 🚀 USAGE
-
-```python
-from ml.pipeline import get_ml_pipeline
-
-pipeline = get_ml_pipeline()
-output = pipeline.process_user_profile(user_profile_dict)
-```
+### Admin
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/admin/users` | List all users |
+| GET | `/admin/stats` | Platform statistics |
 
 ---
 
-## 🔌 INTEGRATION (Jour 2)
+## ML Pipeline
 
-### For Zineb (API)
-- Import: `from backend.api.ml_routes import router`
-- Use: Complete MLModuleOutput JSON
+The ML module processes a user profile and returns a structured risk + sentiment assessment:
 
-### For Abd elghani (RAG)
-- Receive: `risk_assessment` from ML
-- Use: `risk_level` for PubMed queries
+**Input:** biometrics (BMI, blood pressure, HbA1c, etc.), exercise history, optional free-text feedback
 
-### For Soufia (LLM Coach)
-- Receive: All ML fields
-- Use: `recommended_exercise_intensity` + `sentiment_analysis` + `cbt_strategy`
-
----
-
-## 📚 DOCUMENTATION
-
-- `README_ML_MODULE.md` - Technical details
-- `INTEGRATION_GUIDE.md` - How to integrate with other teams
-- `QUICK_INPUT_REFERENCE.md` - Input examples
-- `DEPLOYMENT_GUIDE.md` - Deployment options
-
----
-
-## 💻 API ENDPOINTS
-
-```
-POST /api/ml/analyze           - Complete pipeline
-POST /api/ml/risk-only         - Risk only
-POST /api/ml/sentiment-only    - Sentiment only
-GET  /api/ml/health            - Health check
-```
-
----
-
-## 🎯 EXAMPLE OUTPUT
-
+**Output:**
 ```json
 {
-  "user_id": "user_123",
-  "timestamp": "2026-04-04T14:00:00Z",
   "risk_assessment": {
     "risk_score": 39.1,
     "risk_level": "moderate",
     "progression_risk": 40.4,
     "adherence_risk": 90.0,
-    "injury_risk": 22.0,
-    "explanation": "Risk assessment based on clinical factors"
+    "injury_risk": 22.0
   },
   "sentiment_analysis": {
-    "sentiment_score": 0.125,
     "sentiment_label": "neutral",
     "motivation_level": "medium",
     "depression_risk_indicator": false,
-    "cbt_intervention_needed": false,
-    "confidence": 0.755
+    "cbt_intervention_needed": false
   },
   "recommended_exercise_intensity": "moderate",
-  "intensity_rationale": "Moderate risk recommends moderate intensity",
-  "warnings": ["High non-adherence risk. Plan motivational checkpoints."],
-  "metadata": {
-    "model_version": "ml_v1.0",
-    "cbt_strategy": "Positive Reinforcement"
-  }
+  "warnings": ["High non-adherence risk. Plan motivational checkpoints."]
 }
 ```
 
 ---
 
-## 📊 TEST RESULTS
+## Running Tests
 
-```
-✅ Module Imports
-✅ Contract Validation
-✅ Sentiment Analysis
-✅ Motivation Engine
-✅ Risk Model
-✅ Complete Pipeline
-✅ Different Risk Profiles
+```bash
+# Quick ML test
+python direct_test.py
 
-TOTAL: 7/7 PASSING ✅
+# Full test suite (7 tests)
+python test_ml_comprehensive.py
+
+# Setup verification
+python verify_setup.py
 ```
 
 ---
 
-## ⚠️ NOTES
+## Team
 
-- XGBoost not required (fallback heuristic model works)
-- All inputs validated with Pydantic
-- Zero external dependencies for core functionality
-- Production-ready for immediate deployment
+| Member | Role |
+|--------|------|
+| Taha | ML module (risk model, sentiment, CBT) |
+| Zineb | Backend architecture & API |
+| Soufia | LLM coaching agent |
 
 ---
 
-**Developer**: Taha  
-**Date**: April 4, 2026  
-**Status**: 🟢 PRODUCTION READY
+## License
 
+MIT
