@@ -1,0 +1,13 @@
+ADA Standards of Medical Care in Diabetes 2024
+Source: American Diabetes Association
+
+Exercise Recommendations for Type 2 Diabetes:
+- Adults with T2DM should perform 150+ min/week of moderate-intensity aerobic activity
+- Spread over at least 3 days/week with no more than 2 consecutive days without exercise
+- Resistance training 2-3x/week on non-consecutive days
+- Reduce prolonged sitting: interrupt every 30 min with light activity
+- Blood glucose monitoring: check before exercise if on insulin or secretagogues
+- Target blood glucose 100-250 mg/dL before exercise
+- Avoid exercise if glucose >300 mg/dL or <100 mg/dL
+- HbA1c reduction: aerobic exercise reduces HbA1c by 0.6-0.7% on average
+- Combined aerobic + resistance training reduces HbA1c more than either alone

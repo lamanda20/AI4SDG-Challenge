@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f1dcc4;
+    color: #2d2a1e;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Lora', serif;
+  }
+}
+
+@layer components {
+  /* ── Card glass effect ── */
+  .glass-card {
+    @apply bg-white/80 backdrop-blur-sm border border-white/60 shadow-lg;
+  }
+
+  /* ── Skeleton loader ── */
+  .skeleton {
+    background: linear-gradient(90deg, #e8d5bb 25%, #f1dcc4 50%, #e8d5bb 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s infinite linear;
+    @apply rounded-xl;
+  }
+
+  /* ── Input field base ── */
+  .input-field {
+    @apply w-full px-4 py-3 rounded-2xl bg-cream border-2 border-transparent
+           focus:border-olive focus:outline-none text-dark transition-all duration-200
+           placeholder:text-dark/40;
+  }
+
+  /* ── Button variants ── */
+  .btn-primary {
+    @apply px-6 py-3 rounded-full bg-orange text-white font-semibold
+           hover:bg-orange/90 hover:-translate-y-0.5 active:translate-y-0
+           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed
+           disabled:hover:translate-y-0 shadow-md hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-full border-2 border-olive text-olive font-semibold
+           hover:bg-olive hover:text-white transition-all duration-200;
+  }
+
+  /* ── Badge ── */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  /* ── Nav link ── */
+  .nav-link {
+    @apply relative text-sm font-medium text-white/80 hover:text-white transition-colors duration-200
+           after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0
+           after:bg-gold after:transition-all after:duration-300
+           hover:after:w-full;
+  }
+
+  .nav-link-active {
+    @apply text-white after:w-full;
+  }
+
+  /* ── Page container ── */
+  .page-enter {
+    animation: slideUp 0.4s ease forwards;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    @apply h-2 rounded-full bg-cream overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full rounded-full bg-gradient-to-r from-olive to-orange transition-all duration-700;
+  }
+}
+
+/* ── Scrollbar styling ── */
+::-webkit-scrollbar       { width: 6px; }
+::-webkit-scrollbar-track { background: #f1dcc4; }
+::-webkit-scrollbar-thumb { background: #c9b965; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #696e21; }
+
+/* ── Checkbox custom ── */
+input[type="checkbox"] {
+  accent-color: #696e21;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── Range input ── */
+input[type="range"] {
+  accent-color: #df802c;
+  cursor: pointer;
+}
+
+/* ── Number input arrows hide ── */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.5;
+}
+
+/* ── Toast notification ── */
+.toast {
+  @apply fixed bottom-6 right-6 z-50 px-5 py-3 rounded-2xl shadow-xl
+         text-sm font-medium;
+  animation: slideUp 0.5s ease forwards;
+}
+
+.toast-success { @apply bg-emerald-500 text-white; }
+.toast-error   { @apply bg-red-500 text-white; }
