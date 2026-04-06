@@ -253,7 +253,7 @@ python verify_setup.py
 |--------|------|
 | Taha | ML module (risk model, sentiment, CBT) |
 | Zineb | Backend architecture & API |
-| Soufia | LLM coaching agent |
+| Soufia | LLM coaching agent + RAG |
 
 ---
 
