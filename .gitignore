@@ -58,3 +58,6 @@ htmlcov/
 Thumbs.db
 .DS_Store
 
+# Claude Code
+.claude/
+
